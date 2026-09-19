@@ -1,0 +1,24 @@
+---
+interface Props {
+	text: string;
+	as?: 'h1' | 'h2';
+	class?: string;
+}
+const { text, as: Tag = 'h2', class: className } = Astro.props;
+const chars = [...text];
+---
+
+<Tag class:list={['swirl-text', className]}>
+	{chars.map((ch) => <span>{ch}</span>)}
+</Tag>
+
+<style>
+	.swirl-text {
+		display: inline-block;
+		white-space: normal;
+	}
+	.swirl-text span {
+		display: inline-block;
+		will-change: transform;
+	}
+</style>

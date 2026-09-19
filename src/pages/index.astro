@@ -1,0 +1,74 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import SwirlText from '../components/SwirlText.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+function toSlug(pubDate: Date, title: string) {
+	const year = pubDate.getFullYear();
+	const month = String(pubDate.getMonth() + 1).padStart(2, '0');
+	const day = String(pubDate.getDate()).padStart(2, '0');
+	// "?" 等のURL予約文字はエンコードしないと、リンク先が実ファイルのパスと一致しない
+	const safeTitle = title.replace(/[?#%]/g, (ch) => encodeURIComponent(ch));
+	return `/${year}/${month}/${day}/${safeTitle}/`;
+}
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<!doctype html>
+<html lang="ja">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			main {
+				width: 100%;
+				max-width: 700px;
+			}
+			.blog-list {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 2.5rem;
+				text-align: center;
+			}
+			.blog-item {
+				text-decoration: none;
+				color: var(--color-text);
+			}
+			.post-title {
+				margin: 0;
+				font-size: 1.6rem;
+				font-weight: 800;
+				line-height: 1.4;
+				text-decoration: underline;
+				text-decoration-color: #fc0fc0;
+				text-decoration-thickness: 3px;
+				text-underline-offset: 4px;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="blog-list">
+				{
+					posts.map((post) => (
+						<a class="blog-item" href={toSlug(post.data.pubDate, post.data.title)}>
+							<SwirlText text={post.data.title} as="h2" class="post-title" />
+						</a>
+					))
+				}
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<script>
+	import '../scripts/swirl';
+</script>
