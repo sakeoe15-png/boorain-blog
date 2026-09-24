@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import crypto from 'node:crypto';
+import { toSlugPath } from '../../lib/slug';
 
 export const prerender = false;
 
@@ -66,12 +67,6 @@ async function findAvailableFilename(iso: string, token: string): Promise<string
 		candidate = `${iso}-${suffix}.md`;
 		suffix++;
 	}
-}
-
-function toSlugPathForReply(pubDate: Date, title: string): string {
-	const { year, month, day } = toDatePath(pubDate);
-	const cleanTitle = title.replace(/[?#%]/g, '');
-	return `${year}/${month}/${day}/${cleanTitle}`;
 }
 
 async function replyToLine(replyToken: string, text: string, accessToken: string) {
@@ -144,7 +139,7 @@ export const POST: APIRoute = async ({ request }) => {
 			continue;
 		}
 
-		const url = `https://boorain.space/${toSlugPathForReply(now, parsed.title)}/`;
+		const url = `https://boorain.space/${toSlugPath(now, parsed.title)}/`;
 		await replyToLine(
 			replyToken,
 			`投稿しました！数分後に反映されます:\n${url}`,

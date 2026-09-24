@@ -8,6 +8,7 @@ export function toSlugPath(pubDate: Date, title: string): string {
 	const year = pubDate.getFullYear();
 	const month = String(pubDate.getMonth() + 1).padStart(2, '0');
 	const day = String(pubDate.getDate()).padStart(2, '0');
-	const cleanTitle = title.replace(/[?#%]/g, '');
+	// 半角スペース等の空白もURLでは壊れやすい(メッセージアプリのリンク自動検出が途中で切れる等)ため除去する
+	const cleanTitle = title.replace(/[?#%]/g, '').replace(/\s+/g, '');
 	return `${year}/${month}/${day}/${cleanTitle}`;
 }
