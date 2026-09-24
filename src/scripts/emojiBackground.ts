@@ -17,7 +17,6 @@ function spawnBurst(x: number, y: number) {
 	for (let i = 0; i < BURST_PARTICLES; i++) {
 		const particle = document.createElement('span');
 		particle.className = 'emoji-burst-particle';
-		particle.textContent = '✨';
 		const angle = (i / BURST_PARTICLES) * Math.PI * 2 + Math.random() * 0.5;
 		const distance = 40 + Math.random() * 40;
 		particle.style.setProperty('--bx', `${Math.cos(angle) * distance}px`);
