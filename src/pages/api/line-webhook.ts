@@ -33,7 +33,8 @@ function parseMessage(text: string): { title: string; body: string } | null {
 	const titleMatch = text.match(/タイトル[:：]\s*([\s\S]*?)(?:\n本文[:：]|$)/);
 	const bodyMatch = text.match(/本文[:：]\s*([\s\S]*)/);
 	if (!titleMatch || !bodyMatch) return null;
-	const title = titleMatch[1].trim();
+	// タイトルは1行に強制する(改行が混ざるとURL・YAMLフロントマターが壊れるため)
+	const title = titleMatch[1].replace(/\s*\n\s*/g, ' ').trim();
 	const body = bodyMatch[1].trim();
 	if (!title || !body) return null;
 	return { title, body };
