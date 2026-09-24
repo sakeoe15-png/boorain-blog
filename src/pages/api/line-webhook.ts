@@ -98,10 +98,21 @@ export const POST: APIRoute = async ({ request }) => {
 	const payload = JSON.parse(rawBody);
 	const events = payload.events ?? [];
 
+	const ownerUserId = import.meta.env.LINE_OWNER_USER_ID;
+
 	for (const event of events) {
 		if (event.type !== 'message' || event.message?.type !== 'text') continue;
 
 		const replyToken = event.replyToken;
+		const senderId = event.source?.userId;
+
+		// 投稿できるのは本人のLINEアカウントのみ(第三者がこのBotを友だち追加しても投稿できないようにする)
+		if (!ownerUserId || senderId !== ownerUserId) {
+			// 本人確認用にユーザーIDだけ返す(初回セットアップ時の取得用。認可チェック自体には影響しない)
+			await replyToLine(replyToken, `このBotは投稿者専用です。\nあなたのuserId: ${senderId ?? '(取得できません)'}`, accessToken);
+			continue;
+		}
+
 		const parsed = parseMessage(event.message.text as string);
 
 		if (!parsed) {
