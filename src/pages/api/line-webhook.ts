@@ -20,6 +20,15 @@ function toDatePath(date: Date) {
 	return { year, month, day, iso: `${year}-${month}-${day}` };
 }
 
+// Markdownは空行を挟まない改行を無視する仕様のため、LINEで入力した通りに
+// 改行が見た目に反映されるよう、単純な改行をMarkdownの強制改行(行末に半角スペース2つ)に変換する
+function preserveLineBreaks(text: string): string {
+	return text
+		.split('\n')
+		.map((line) => line.replace(/\s+$/, ''))
+		.join('  \n');
+}
+
 function parseMessage(text: string): { title: string; body: string } | null {
 	const titleMatch = text.match(/タイトル[:：]\s*([\s\S]*?)(?:\n本文[:：]|$)/);
 	const bodyMatch = text.match(/本文[:：]\s*([\s\S]*)/);
@@ -111,7 +120,7 @@ export const POST: APIRoute = async ({ request }) => {
 		const now = new Date();
 		const { iso } = toDatePath(now);
 		const filename = await findAvailableFilename(iso, githubToken);
-		const content = `---\ntitle: "${parsed.title.replace(/"/g, '\\"')}"\npubDate: ${iso}\n---\n\n${parsed.body}\n`;
+		const content = `---\ntitle: "${parsed.title.replace(/"/g, '\\"')}"\npubDate: ${iso}\n---\n\n${preserveLineBreaks(parsed.body)}\n`;
 		const contentBase64 = Buffer.from(content, 'utf-8').toString('base64');
 
 		const putRes = await githubRequest(
