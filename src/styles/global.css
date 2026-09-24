@@ -133,6 +133,14 @@ hr {
 	touch-action: pan-y;
 }
 
+/* タップ時に出る灰色のハイライト・長押し選択メニューを抑制し、渦巻きエフェクトだけが見えるようにする
+   (本文(.swirl-scope)はコピー等のために対象外、タイトル(.swirl-text)とリンクのみ) */
+.swirl-text,
+a {
+	-webkit-tap-highlight-color: transparent;
+	-webkit-touch-callout: none;
+}
+
 .sr-only {
 	border: 0;
 	padding: 0;
