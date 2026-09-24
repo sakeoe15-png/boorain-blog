@@ -21,6 +21,9 @@
 		display: inline-block;
 		font-size: var(--size);
 		animation: emoji-spin var(--spin-duration) linear infinite;
+		/* 絵文字1つ分だけクリック/タップを受け付ける(背景全体はpointer-events: noneのまま) */
+		pointer-events: auto;
+		cursor: pointer;
 	}
 	@keyframes emoji-fall {
 		from {
@@ -42,6 +45,33 @@
 		:global(.bg-emoji-fall),
 		:global(.bg-emoji-spin) {
 			animation: none;
+		}
+	}
+	:global(.emoji-burst) {
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: 0;
+		height: 0;
+		pointer-events: none;
+		z-index: 5;
+	}
+	:global(.emoji-burst-particle) {
+		position: absolute;
+		left: 0;
+		top: 0;
+		font-size: 1.1rem;
+		transform: translate(-50%, -50%);
+		animation: emoji-burst-particle 500ms ease-out forwards;
+	}
+	@keyframes emoji-burst-particle {
+		from {
+			transform: translate(-50%, -50%) scale(1);
+			opacity: 1;
+		}
+		to {
+			transform: translate(calc(-50% + var(--bx)), calc(-50% + var(--by))) scale(0.3);
+			opacity: 0;
 		}
 	}
 </style>
