@@ -6,15 +6,7 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import SwirlText from '../components/SwirlText.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
-
-function toSlug(pubDate: Date, title: string) {
-	const year = pubDate.getFullYear();
-	const month = String(pubDate.getMonth() + 1).padStart(2, '0');
-	const day = String(pubDate.getDate()).padStart(2, '0');
-	// "?" 等のURL予約文字はエンコードしないと、リンク先が実ファイルのパスと一致しない
-	const safeTitle = title.replace(/[?#%]/g, (ch) => encodeURIComponent(ch));
-	return `/${year}/${month}/${day}/${safeTitle}/`;
-}
+import { toSlug } from '../lib/slug';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -60,7 +52,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 			<div class="blog-list">
 				{
 					posts.map((post) => (
-						<a class="blog-item" href={toSlug(post.data.pubDate, post.data.title)}>
+						<a class="blog-item" href={`/${toSlug(post.data.pubDate, post.data.title)}/`}>
 							<SwirlText text={post.data.title} as="h2" class="post-title" />
 						</a>
 					))

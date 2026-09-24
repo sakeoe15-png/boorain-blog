@@ -1,19 +1,14 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BlogPost from '../layouts/BlogPost.astro';
+import { toSlug } from '../lib/slug';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog', ({ data }) => !data.draft);
-	return posts.map((post) => {
-		const d = post.data.pubDate;
-		const year = d.getFullYear();
-		const month = String(d.getMonth() + 1).padStart(2, '0');
-		const day = String(d.getDate()).padStart(2, '0');
-		return {
-			params: { slug: `${year}/${month}/${day}/${post.data.title}` },
-			props: post,
-		};
-	});
+	return posts.map((post) => ({
+		params: { slug: toSlug(post.data.pubDate, post.data.title) },
+		props: post,
+	}));
 }
 type Props = CollectionEntry<'blog'>;
 
