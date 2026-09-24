@@ -311,43 +311,59 @@ icon: "book"（使用するアイコン filename）
 
 SVGをsharp/librsvg経由でPNG/ICOに変換すると、絵文字が黒いシルエットになる（カラー絵文字フォントが無いため）。Chromium（Playwright）でHTMLとしてレンダリング→スクリーンショットする方式なら正しいカラー絵文字が得られる。
 
-## 10. LINE投稿機能（計画中、2026年9月24日に設計方針を決定・未着手）
+## 10. LINE投稿機能（2026年9月24日 実装完了・本番動作確認済み）
 
 ### 目的
 
 PCを毎回立ち上げず、スマホ（LINE）から新規記事を投稿できるようにする。
 
-### 採用方式：LINE公式アカウント（Messaging API）
+### 採用方式：LINE公式アカウント（Messaging API）+ Vercel Serverless Function
 
-Slack案も比較したが、既存プロジェクト（SV LINEチャットボット等）で土地勘があり、新規ワークスペース選定の手間も無いLINEを採用。
+当初はGCP Cloud Functionを検討したが、コスト比較の結果Vercel Serverless Functionに変更。**Vercel Hobbyプランはカード登録不要・月100万回実行まで無料**で、boorain.spaceが既に乗っているVercelプロジェクトにAPIルートを1つ追加するだけで済むため、新規GCPアカウントが不要になった。
 
-### アーキテクチャ（予定）
+### アーキテクチャ（実装済み）
 
 ```
-LINEでメッセージ送信
-  ↓ Webhook
-Cloud Function（個人GCPアカウント側、要新規作成）
-  ↓ GitHub API でファイル作成・commit・push
+LINEでメッセージ送信（「タイトル: ○○○」「本文: ○○○」形式）
+  ↓ Webhook (x-line-signatureで署名検証)
+Vercel Serverless Function（src/pages/api/line-webhook.ts）
+  ↓ GitHub Contents API (PUT) でファイル作成・commit・push
 GitHub Repository（boorain-blog, main branch）
-  ↓ 既存のVercel自動デプロイ
+  ↓ 既存のVercel Git連携による自動デプロイ
 boorain.space に反映（数分後）
-  ↓ 完了通知
+  ↓ 完了通知（reply、無料）
 LINEに「投稿しました」＋公開URLを返信
 ```
 
-### 決定済みの仕様
+### 実装詳細
 
-- **メッセージフォーマット：** `タイトル: ○○○` `本文: ○○○` のラベル付きで送信
-- **完了通知：** あり（公開URL付きでLINEに返信）
-- **投稿日：** メッセージ受信日を`pubDate`として自動設定
-- **ファイル命名：** 既存記事と同じ`YYYY-MM-DD.md`形式（同日複数件は`-2`等のサフィックス）
+- `src/pages/api/line-webhook.ts`（`export const prerender = false` でこのルートのみサーバーレンダリング化）
+- `astro.config.mjs`: `@astrojs/vercel`アダプター追加、`output: 'static'` + `adapter: vercel()`（他の全ページは従来通り静的ビルド）
+- メッセージフォーマット: `タイトル: ○○○` `本文: ○○○` を正規表現でパース、フォーマット不一致時はLINEにエラー文言を返信
+- ファイル命名: `YYYY-MM-DD.md`（同日複数件はGitHub API側で既存ファイルの有無を確認し`-2`等のサフィックスを付与）
+- 認証: `LINE_CHANNEL_SECRET`でHMAC-SHA256署名検証（Vercel環境変数、production、sensitive設定）
 
-### 未確定・要対応
+### 環境変数（Vercel Production、すべてsensitive）
 
-- **GCPプロジェクトの所属アカウント：** boorain.space自体が個人のGitHub/Vercelアカウントで運用されているため、Cloud Functionも個人のGoogleアカウント（sakeoe15@gmail.com）側に作るべきだが、2026年9月24日時点でローカルのgcloudは仕事用アカウント（gws_account_000@eyecarelabo.com）のみ認証済み。個人アカウント側の既存GCPプロジェクト有無を確認 → なければ新規作成（`!gcloud auth login`でユーザー側ログインが必要）
-- LINE Developersでの公式アカウント（Messaging APIチャネル）新規作成（ブラウザでの対話操作が必要）
-- GitHubへの書き込み用Personal Access Tokenの発行・Secret Manager管理
-- draft機能（下書き投稿）をLINE経由でも使うかどうかは未検討
+| 変数名 | 用途 |
+|---|---|
+| `LINE_CHANNEL_SECRET` | Webhook署名検証 |
+| `LINE_CHANNEL_ACCESS_TOKEN` | LINEへの返信送信 |
+| `GH_CONTENT_TOKEN` | GitHub Contents API書き込み（fine-grained PAT、`sakeoe15-png/boorain-blog`のみ、Contents: Read and write） |
+
+### LINE公式アカウント設定
+
+- プロバイダー「Sak個人」配下にチャネル「boorain.space」（@519awqwo）を新規作成（既存の英会話アプリ用チャネルとは別）
+- Webhook URL: `https://boorain.space/api/line-webhook`、Webhook有効化
+- 「応答メッセージ」はオフ（LINE標準の自動応答とBotの返信が二重に来るのを防ぐため）
+
+### 動作確認（2026年9月24日）
+
+「タイトル: LINEからのテスト投稿」を送信 → GitHub commit確認 → 数分後に本番URLで記事表示確認 → テスト記事は削除済み。一連のフロー、実機で成功。
+
+### 今後の拡張候補（未着手）
+
+- draft（下書き投稿）をLINE経由でも使うかどうかは未検討
 
 ---
 
