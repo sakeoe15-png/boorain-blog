@@ -42,6 +42,29 @@ function setupSwirl(container: HTMLElement) {
 	let pointer: { x: number; y: number } | null = null;
 	const current = spans.map(() => ({ dx: 0, dy: 0, rot: 0 }));
 
+	// 文字の基準位置をドキュメント座標でキャッシュしておき、毎フレームのgetBoundingClientRect
+	// (強制レイアウト計算、文字数が多いほど重くなる)を避ける。transformは見た目上の位置しか
+	// 変えないため、キャッシュ後はスクロール量の差分だけで現在のビューポート座標を復元できる
+	let baseCenters: { cx: number; cy: number }[] = [];
+	function captureBaseCenters() {
+		const prevTransforms = spans.map((span) => span.style.transform);
+		spans.forEach((span) => {
+			span.style.transform = '';
+		});
+		baseCenters = spans.map((span) => {
+			const rect = span.getBoundingClientRect();
+			return {
+				cx: rect.left + rect.width / 2 + window.scrollX,
+				cy: rect.top + rect.height / 2 + window.scrollY,
+			};
+		});
+		spans.forEach((span, i) => {
+			span.style.transform = prevTransforms[i];
+		});
+	}
+	captureBaseCenters();
+	window.addEventListener('resize', captureBaseCenters);
+
 	function updatePointer(x: number, y: number) {
 		pointer = { x, y };
 	}
@@ -53,9 +76,9 @@ function setupSwirl(container: HTMLElement) {
 			let tdy = 0;
 			let trot = 0;
 			if (pointer) {
-				const rect = span.getBoundingClientRect();
-				const cx = rect.left + rect.width / 2;
-				const cy = rect.top + rect.height / 2;
+				const base = baseCenters[i];
+				const cx = base.cx - window.scrollX;
+				const cy = base.cy - window.scrollY;
 				const dx = cx - pointer.x;
 				const dy = cy - pointer.y;
 				const dist = Math.sqrt(dx * dx + dy * dy);
