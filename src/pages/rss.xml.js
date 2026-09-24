@@ -1,7 +1,7 @@
 import { getCollection } from 'astro:content';
 import rss from '@astrojs/rss';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
-import { toSlug } from '../lib/slug';
+import { toSlugPath } from '../lib/slug';
 
 export async function GET(context) {
 	const posts = await getCollection('blog', ({ data }) => !data.draft);
@@ -11,7 +11,7 @@ export async function GET(context) {
 		site: context.site,
 		items: posts.map((post) => ({
 			...post.data,
-			link: `/${toSlug(post.data.pubDate, post.data.title)}/`,
+			link: `/${toSlugPath(post.data.pubDate, post.data.title)}/`,
 		})),
 	});
 }
