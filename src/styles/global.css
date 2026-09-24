@@ -126,6 +126,13 @@ hr {
 	}
 }
 
+/* スマホでスワイプ操作時にブラウザ標準のダブルタップ/ピンチズームが誘発され、
+   渦巻きエフェクトの意図した見た目が崩れるのを防ぐ(縦スクロールのみ許可) */
+.swirl-text,
+.swirl-scope {
+	touch-action: pan-y;
+}
+
 .sr-only {
 	border: 0;
 	padding: 0;

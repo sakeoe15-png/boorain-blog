@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
+import EmojiBackground from '../components/EmojiBackground.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
@@ -57,6 +58,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 	</head>
 
 	<body>
+		<EmojiBackground />
 		<Header />
 		<main>
 			<article>
@@ -90,4 +92,5 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 
 <script>
 	import '../scripts/swirl';
+	import '../scripts/emojiBackground';
 </script>

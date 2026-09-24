@@ -26,3 +26,4 @@ pnpm-debug.log*
 # WordPress移行時の生データ・中間生成物(Astro側に取り込み済みのため不要)
 WordPress.*.xml
 posts-markdown/
+.vercel

@@ -1,0 +1,47 @@
+---
+---
+
+<div class="emoji-bg" aria-hidden="true"></div>
+
+<style>
+	.emoji-bg {
+		position: fixed;
+		inset: 0;
+		overflow: hidden;
+		pointer-events: none;
+		z-index: 0;
+	}
+	:global(.bg-emoji-fall) {
+		position: absolute;
+		top: -10vh;
+		left: var(--left);
+		animation: emoji-fall var(--fall-duration) linear var(--fall-delay) infinite;
+	}
+	:global(.bg-emoji-spin) {
+		display: inline-block;
+		font-size: var(--size);
+		animation: emoji-spin var(--spin-duration) linear infinite;
+	}
+	@keyframes emoji-fall {
+		from {
+			transform: translateY(0);
+		}
+		to {
+			transform: translateY(120vh);
+		}
+	}
+	@keyframes emoji-spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(calc(var(--spin-dir) * 360deg));
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		:global(.bg-emoji-fall),
+		:global(.bg-emoji-spin) {
+			animation: none;
+		}
+	}
+</style>
