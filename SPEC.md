@@ -3,7 +3,10 @@
 **プロジェクト名：** boorain.space（boo's brain）ブログ構築・移行  
 **プロジェクト所有者：** Sak（Sakumi Kurosawa）  
 **作成日：** 2026年9月19日  
-**バージョン：** 1.0
+**最終更新：** 2026年9月24日  
+**バージョン：** 2.0（移行・公開完了、追加機能フェーズ）
+
+**現状：** ✅ 本番公開済み（https://boorain.space）
 
 ---
 
@@ -96,27 +99,25 @@ boorain.space に反映（即座）
 | **登録日** | 2026年9月19日 |
 | **初年度費用** | ¥0（クーポン割引適用） |
 | **2年目以降** | ¥3,168/年 |
-| **WHOIS代行** | 無料（お名前.com が代行） |
-| **クーポン有効期限** | 2026年9月30日 23:59 |
+| **WHOIS代行** | 有効（お名前.com が代行、個人情報非公開） |
 
 **登録状態：** ✅ 完了（2026年9月19日）
 
-### DNS設定（Vercel nameservers）
+### DNS設定（実際の構成、2026年9月24日設定完了）
 
-Vercel project 作成後、以下の nameservers に変更します：
+Vercelのネームサーバーへの完全移管ではなく、**お名前.comのDNSレコード設定機能＋Aレコード**方式を採用。
 
-```
-※ Vercel dashboard → Project Settings → Domains で確認可能
-NS1: ns-XXX.vercel-dns.com
-NS2: ns-YYY.vercel-dns.com
-NS3: ns-ZZZ.vercel-dns.com
-NS4: ns-WWW.vercel-dns.com
-```
+| 項目 | 値 |
+|------|-----|
+| **ネームサーバー** | 01.dnsv.jp〜04.dnsv.jp（お名前.comのDNSレコード設定用） |
+| **Aレコード** | `@` → `76.76.21.21`（Vercel） |
 
-設定手順：
-1. お名前.com ダッシュボード → boorain.space → DNS設定
-2. 「ネームサーバー設定」で上記を入力
-3. 反映待ち（最大24時間）
+設定手順（実施済み）：
+1. お名前.com → ドメインDNS設定 → Aレコード追加（ホスト名空欄、値 `76.76.21.21`）
+2. ネームサーバーを「お名前.comのネームサーバーを使う（01〜04.dnsv.jp）」に変更
+3. 反映確認（今回は数十分〜1時間程度で反映）
+
+**注意：** お名前.comは「ネームサーバー変更をしない」を選んだ場合でも、DNSレコード設定機能を使うにはネームサーバーをdnsv.jp系に変更する必要がある（お名前.com独自の仕様、無料）。
 
 ---
 
@@ -126,36 +127,36 @@ NS4: ns-WWW.vercel-dns.com
 
 | No. | タスク | 実行者 | ステータス |
 |-----|--------|--------|-----------|
-| 1-1 | WordPress export（XML） | Sak | ⏳ 予定 |
-| 1-2 | Markdown 変換 | Claude | ⏳ 予定 |
+| 1-1 | WordPress export（XML） | Sak | ✅ 完了 |
+| 1-2 | Markdown 変換 | Claude | ✅ 完了 |
 
 ### Phase 2: 静的サイト構築
 
 | No. | タスク | コマンド | ステータス |
 |-----|--------|---------|-----------|
-| 2-1 | Astro プロジェクト初期化 | `npm create astro -- --template blog` | ⏳ 予定 |
-| 2-2 | CSS カスタマイズ（lime green + layout） | Manual edit | ⏳ 予定 |
-| 2-3 | Apple SF Symbols download・配置 | Manual | ⏳ 予定 |
-| 2-4 | Markdown ファイル配置 | Copy to `/src/content/blog/` | ⏳ 予定 |
-| 2-5 | ローカル確認 | `npm run dev` | ⏳ 予定 |
+| 2-1 | Astro プロジェクト初期化 | `npm create astro -- --template blog` | ✅ 完了 |
+| 2-2 | CSS カスタマイズ（lime green + layout） | Manual edit | ✅ 完了 |
+| 2-3 | Apple SF Symbols download・配置 | Manual | ✅ 完了 |
+| 2-4 | Markdown ファイル配置 | Copy to `/src/content/blog/` | ✅ 完了 |
+| 2-5 | ローカル確認 | `npm run dev` | ✅ 完了 |
 
 ### Phase 3: GitHub・Vercel 連携
 
 | No. | タスク | ステータス |
 |-----|--------|-----------|
-| 3-1 | GitHub repository 作成・初期化 | ⏳ 予定 |
-| 3-2 | ローカルから push | ⏳ 予定 |
-| 3-3 | Vercel import（GitHub repo連携） | ⏳ 予定 |
-| 3-4 | Vercel build・deploy | ⏳ 予定 |
-| 3-5 | Vercel nameservers 確認 | ⏳ 予定 |
+| 3-1 | GitHub repository 作成・初期化 | ✅ 完了 |
+| 3-2 | ローカルから push | ✅ 完了 |
+| 3-3 | Vercel import（GitHub repo連携） | ✅ 完了 |
+| 3-4 | Vercel build・deploy | ✅ 完了 |
+| 3-5 | Vercel nameservers 確認 | ✅ 完了 |
 
 ### Phase 4: DNS設定・反映
 
 | No. | タスク | ステータス |
 |-----|--------|-----------|
-| 4-1 | お名前.com nameservers 入力 | ⏳ 予定 |
-| 4-2 | DNS propagation 確認（24h） | ⏳ 予定 |
-| 4-3 | boorain.space アクセス確認 | ⏳ 予定 |
+| 4-1 | お名前.com nameservers 入力 | ✅ 完了 |
+| 4-2 | DNS propagation 確認（24h） | ✅ 完了 |
+| 4-3 | boorain.space アクセス確認 | ✅ 完了 |
 
 ---
 
@@ -230,10 +231,13 @@ icon: "book"（使用するアイコン filename）
 | 項目 | 値 |
 |------|-----|
 | **リポジトリ名** | boorain-blog |
-| **アカウント** | sakeoe15-png |
-| **公開設定** | Public |
+| **URL** | https://github.com/sakeoe15-png/boorain-blog |
+| **アカウント** | sakeoe15-png（個人用） |
+| **公開設定** | Public（WordPress全記事の内容確認済み、公開して問題ない） |
 | **Branch** | main（デフォルト） |
-| **.gitignore** | Node 標準（node_modules など） |
+| **.gitignore** | Node標準 + `.vercel`（vercel linkが自動追加） |
+
+**複数GitHubアカウント環境での注意：** `gh auth switch --user sakeoe15-png` だけではgit pushの認証情報が切り替わらないことがある。`gh auth setup-git` を追加実行してcredential helperを再同期する必要あり（gwsaccount000-cpuのまま403エラーになる場合の対処法）。
 
 ### Vercel 設定
 
@@ -245,6 +249,14 @@ icon: "book"（使用するアイコン filename）
 | **Install Command** | npm install |
 | **Environment Variables** | なし（static site） |
 | **Custom Domain** | boorain.space |
+| **アカウント** | sakeoe15-8292（個人用、Vercelチーム名「Sak's projects」） |
+| **プロジェクト名** | boorain |
+| **GitHub連携** | 有効（push → 自動デプロイ、GitHub App「Vercel」をboorain-blogにインストール済み） |
+
+**GitHub連携のセットアップで詰まった点：**
+- 初回は「Login Connection」未設定でエラー → Vercelアカウント設定でGitHubログイン連携が必要
+- 次に「Vercel」GitHub Appがリポジトリへのアクセス権を持っておらずエラー → https://github.com/apps/vercel でインストール・リポジトリ選択が必要
+- 自動デプロイは正常に動作するが、**反映まで数分（時に5分以上）かかることがある**。慌てて手動`vercel --prod`を打たなくても、待てば自動で反映される
 
 ---
 
@@ -270,35 +282,81 @@ icon: "book"（使用するアイコン filename）
 
 ---
 
-## 8. Vercel Nameservers（設定用）
+## 8. ビジュアル追加機能（2026年9月24日実装、すべて本番反映済み）
 
-**※ Vercel project 作成後、以下を確認して入力してください**
+| 機能 | 内容 | 実装場所 |
+|------|------|---------|
+| 絵文字背景エフェクト | 🧠🫍🦄🐶🦕🐈🌞🌝🌛🌜🌚🌎🌏🌍🪐💫🌟✨⚡️☄️🫯🌈❄️🍙🍿🍭🪂🧚🏻‍♀️👼🏼 が背景に散らばり回転しながら上から下に流れる | `src/components/EmojiBackground.astro`, `src/scripts/emojiBackground.ts` |
+| 花火エフェクト | 背景の絵文字をクリック/タップすると花火(ショッキングピンク #f862f9のパーティクル)が開いてその絵文字だけ消える | 同上（click イベント、絵文字はCSS colorで色指定できないためCSS描画の円形パーティクルを使用） |
+| ヘッダー固定 | スクロールしても「boorain.space」ヘッダーが常に画面上部に表示 | `src/components/Header.astro`（`position: sticky`） |
+| サイト説明文 | 「boo's brain — 思考の記録」→「☆彡」に変更 | `src/consts.ts` の `SITE_DESCRIPTION` |
+| ファビコン | Astroデフォルトのロケット→📡（衛星アンテナ）に変更。favicon.svg・favicon.ico（Chromiumでカラーレンダリングして生成、librsvgはカラー絵文字非対応で黒シルエットになるため要注意）・apple-touch-icon.png（iOS用、lime green背景）の3点セット | `public/favicon.svg`, `public/favicon.ico`, `public/apple-touch-icon.png`, `src/components/BaseHead.astro` |
+| スマホのタップ時グレーハイライト抑制 | 背景絵文字・記事タイトル・リンクをタップした際に出る標準のグレー表示/長押しメニューを`-webkit-tap-highlight-color: transparent`等で抑制 | `src/styles/global.css`, `src/components/EmojiBackground.astro` |
+| スマホでのズーム誤爆修正 | スワイプ操作でブラウザ標準のダブルタップ/ピンチズームが渦巻きエフェクトと競合していたのを`touch-action: pan-y`で修正 | `src/styles/global.css` |
+| 渦巻きエフェクトの負荷軽減 | 毎フレームの`getBoundingClientRect()`（強制レイアウト計算、文字数が多い記事ほど重くなる）呼び出しをやめ、文字の基準位置を初期化時にキャッシュしてスクロール差分だけで復元する方式に変更 | `src/scripts/swirl.ts` |
+
+## 9. 既知の技術的落とし穴
+
+### 「?」等のURL予約文字を含む記事タイトルが404になる問題（2026年9月24日発見・修正済み）
+
+**症状：** タイトルに `?` を含む記事（例:「音楽好きだけどどこから入る?」）のリンクをクリックすると404になる。
+
+**原因：** Astroの静的ビルドは `getStaticPaths` の `params.slug` に含まれる `?` `#` `%` 等のURL予約文字を、出力ファイル名生成時に**自動でpercent-encodeする**（`?` → 文字列としての`%3F`）。ここでリンク生成側（`<a href>`や`rss.xml.js`）でも同じ文字を`encodeURIComponent`していると、実ファイル名（Astroが1回エンコード）とリンク先URL（手動で1回エンコード）の間でズレが生じ、ブラウザ側の1回のURLデコードでは一致しなくなり404になる。
+
+**対処：** URLパス生成では予約文字を**エンコードせず単純に除去**する方式に統一（`src/lib/slug.ts` の `toSlugPath()`）。表示用タイトル（`<h1>`等）には影響しない。`getStaticPaths`・`<a href>`・RSSの`<link>`すべてこの1関数に統一し、重複実装によるズレの再発を防止。
+
+**教訓：** 静的サイトジェネレータが独自にURLエンコードを行うケースがあるため、リンク側で手動エンコードする前に、実際にビルドして`dist/`配下の実ファイル名を確認すること。
+
+### librsvg（sharp）はカラー絵文字フォントを持たない
+
+SVGをsharp/librsvg経由でPNG/ICOに変換すると、絵文字が黒いシルエットになる（カラー絵文字フォントが無いため）。Chromium（Playwright）でHTMLとしてレンダリング→スクリーンショットする方式なら正しいカラー絵文字が得られる。
+
+## 10. LINE投稿機能（計画中、2026年9月24日に設計方針を決定・未着手）
+
+### 目的
+
+PCを毎回立ち上げず、スマホ（LINE）から新規記事を投稿できるようにする。
+
+### 採用方式：LINE公式アカウント（Messaging API）
+
+Slack案も比較したが、既存プロジェクト（SV LINEチャットボット等）で土地勘があり、新規ワークスペース選定の手間も無いLINEを採用。
+
+### アーキテクチャ（予定）
 
 ```
-Vercel Dashboard → [project] → Settings → Domains
-→ boorain.space の詳細を開く
-→ "Nameservers" セクションを確認
+LINEでメッセージ送信
+  ↓ Webhook
+Cloud Function（個人GCPアカウント側、要新規作成）
+  ↓ GitHub API でファイル作成・commit・push
+GitHub Repository（boorain-blog, main branch）
+  ↓ 既存のVercel自動デプロイ
+boorain.space に反映（数分後）
+  ↓ 完了通知
+LINEに「投稿しました」＋公開URLを返信
 ```
 
-通常、以下の形式です（example）：
+### 決定済みの仕様
 
-```
-ns1.vercel-dns.com
-ns2.vercel-dns.com
-ns3.vercel-dns.com
-ns4.vercel-dns.com
-```
+- **メッセージフォーマット：** `タイトル: ○○○` `本文: ○○○` のラベル付きで送信
+- **完了通知：** あり（公開URL付きでLINEに返信）
+- **投稿日：** メッセージ受信日を`pubDate`として自動設定
+- **ファイル命名：** 既存記事と同じ`YYYY-MM-DD.md`形式（同日複数件は`-2`等のサフィックス）
 
-**入力先：** お名前.com → boorain.space → ネームサーバー設定
+### 未確定・要対応
+
+- **GCPプロジェクトの所属アカウント：** boorain.space自体が個人のGitHub/Vercelアカウントで運用されているため、Cloud Functionも個人のGoogleアカウント（sakeoe15@gmail.com）側に作るべきだが、2026年9月24日時点でローカルのgcloudは仕事用アカウント（gws_account_000@eyecarelabo.com）のみ認証済み。個人アカウント側の既存GCPプロジェクト有無を確認 → なければ新規作成（`!gcloud auth login`でユーザー側ログインが必要）
+- LINE Developersでの公式アカウント（Messaging APIチャネル）新規作成（ブラウザでの対話操作が必要）
+- GitHubへの書き込み用Personal Access Tokenの発行・Secret Manager管理
+- draft機能（下書き投稿）をLINE経由でも使うかどうかは未検討
 
 ---
 
-## 9. 参考資料
+## 11. 参考資料
 
 ### ビジュアル参考
 
 - WordPress 現在デザイン: `/uploads/S__780599300.jpg`
-- 色コード: #A4D65E（lime green）
+- 色コード: #A4D65E（lime green）、#FC0FC0（ショッキングピンク、タイトル下線）、#f862f9（花火パーティクル・コピーライト）
 
 ### ドキュメント
 
@@ -308,26 +366,31 @@ ns4.vercel-dns.com
 
 ---
 
-## 10. トラブルシューティング
+## 12. トラブルシューティング
 
 ### よくある問題
 
 | 問題 | 原因 | 解決策 |
 |------|------|--------|
-| nameservers が反映されない | DNS キャッシュ | 24～48時間待機 |
+| DNSが反映されない | お名前.comのDNSレコード設定機能はdnsv.jp系ネームサーバーへの変更が別途必要 | ネームサーバー設定を「お名前.comのネームサーバーを使う」に変更 |
 | Vercel build エラー | markdown front matter 不正 | YAML 形式確認 |
-| 記事が表示されない | `/src/content/blog/` 外 | ファイルパス確認 |
+| 記事が表示されない | `/src/content/blog/` 外、またはdraft: true | ファイルパス・frontmatter確認 |
+| 「?」等を含むタイトルの記事が404 | 上記9章参照 | `src/lib/slug.ts`のtoSlugPathを使っているか確認 |
+| pushしても自動デプロイが反映されない | 実際は発火しているが数分〜十数分のタイムラグがあることがある | 焦って手動デプロイせず、まず数分待つ |
+| git pushが403エラー | 複数GitHubアカウント環境でcredential helperが古いアカウントのまま | `gh auth switch --user sakeoe15-png && gh auth setup-git` |
+| favicon.icoがカラーにならない | librsvg/sharpがカラー絵文字未対応 | Chromiumでレンダリングして生成し直す（9章参照） |
 
 ---
 
-## 11. 承認・署名
+## 13. 承認・署名
 
 | 項目 | 情報 |
 |------|------|
 | **作成者** | Claude |
 | **承認者** | Sak（Sakumi Kurosawa） |
 | **作成日** | 2026年9月19日 |
-| **承認日** | ⏳ 予定 |
+| **承認日** | ✅ 完了 |
+| **本番公開日** | 2026年9月24日 |
 
 ---
 
